@@ -16,16 +16,27 @@ class Project extends DB
    */
   protected static $table = 'projects';
 
+  protected static $db;
+
+
+
   /**
-   * Mengambil data sebagai object
+   * Mengambil semua data project
    * 
-   * @return object
+   * @param Request $request
+   * 
+   * @return array
    */
-  public static function all(): array
+  public static function findOrAll($request): array
   {
-    return parent::table(self::$table)
-      ->select()
-      ->orderBy('name', 'asc')
-      ->get();
+    $query = parent::table(self::$table);
+
+    if ($request->input?->search) {
+      $query->whereFullText(['description', 'name'], $request->input->search);
+    } else {
+      $query->select();
+    }
+
+    return $query->orderBy('name', 'asc')->get();
   }
 }

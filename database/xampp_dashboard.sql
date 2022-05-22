@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 22, 2022 at 06:41 PM
+-- Generation Time: May 22, 2022 at 07:09 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -70,9 +70,8 @@ INSERT INTO `projects` (`id`, `name`, `description`, `url`, `created_at`, `updat
 --
 ALTER TABLE `projects`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `url_unique` (`url`);
-ALTER TABLE `projects` ADD FULLTEXT KEY `name_fulltext` (`name`);
-ALTER TABLE `projects` ADD FULLTEXT KEY `description_fulltext` (`description`);
+  ADD UNIQUE KEY `unique_url` (`url`) USING BTREE;
+ALTER TABLE `projects` ADD FULLTEXT KEY `fulltext_name_description` (`name`,`description`);
 
 --
 -- AUTO_INCREMENT for dumped tables
