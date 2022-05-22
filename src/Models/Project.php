@@ -27,12 +27,12 @@ class Project extends DB
    * 
    * @return array
    */
-  public static function findOrAll($request): array
+  public static function findOrAll($search): array
   {
     $query = parent::table(self::$table);
 
-    if ($request->input?->search) {
-      $query->whereFullText(['description', 'name'], $request->input->search);
+    if (!empty($search)) {
+      $query->whereFullText(['description', 'name'], $search);
     } else {
       $query->select();
     }

@@ -13,12 +13,19 @@ class HomeController extends Controller
    */
   public function index(Request $request)
   {
+    $search = null;
+
+    if (isset($request->input->search) && !empty($request->input->search)) {
+      $search = $request->input->search;
+    }
+
     return layout(
       view: 'layouts.app',
       content: 'home',
       data: [
         'title' => 'Home',
-        'projects' => Project::findOrAll($request),
+        'projects' => Project::findOrAll($search),
+        'search' => $search,
       ],
     );
   }

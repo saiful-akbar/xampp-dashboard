@@ -19,7 +19,7 @@
   <div class="col-sm-12 col-md-8 col-lg-6 mb-4">
     <form autocomplete="off" method="GET" action="<?= route('home/index') ?>">
       <div class="input-group">
-        <input type="search" name="search" id="search" value="<?php e($_GET['search'] ?? '') ?>" class="form-control" placeholder="Search projects..." />
+        <input type="search" name="search" id="search" value="<?php e($search) ?>" class="form-control" placeholder="Search projects..." />
         <button class="btn btn-outline-secondary" type="submit">
           Search
         </button>
