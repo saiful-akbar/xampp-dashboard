@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 22, 2022 at 02:38 PM
+-- Generation Time: May 22, 2022 at 06:41 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -27,8 +27,8 @@ DELIMITER $$
 --
 CREATE DEFINER=`xampp_dashboard`@`localhost` PROCEDURE `insert_projects` (IN `$name` VARCHAR(50), IN `$description` TEXT, IN `$url` VARCHAR(100))   BEGIN
 
-INSERT INTO projects(name, description, url)
-VALUES($name, $description, $url);
+INSERT INTO `projects`(`name`, `description`, `url`)
+VALUES(`$name`, `$description`, `$url`);
 
 END$$
 
@@ -57,7 +57,7 @@ INSERT INTO `projects` (`id`, `name`, `description`, `url`, `created_at`, `updat
 (1, 'phpMyAdmin', 'Database (MariaDB)', 'http://localhost/phpmyadmin/', '2022-05-22 11:49:39', '2022-05-22 11:49:39'),
 (2, 'Feelbuy Helpdesk', 'Feelbuy technology system', 'http://localhost:8056/php-5/feelbuy-helpdesk/', '2022-05-22 11:49:39', '2022-05-22 11:49:39'),
 (3, 'IO Dev', 'Ipul & Opan Web Portfolio', 'https://iodev.vercel.app/', '2022-05-22 11:49:39', '2022-05-22 11:49:39'),
-(4, 'Si-IBU', 'Sistem Infomasi Bagian Umum', 'https://github.com/saiful-akbar/si-ibu/', '2022-05-22 11:49:39', '2022-05-22 11:49:39'),
+(4, 'Si-IBU', 'Sistem Informasi Bagian Umum', 'https://github.com/saiful-akbar/si-ibu/', '2022-05-22 11:49:39', '2022-05-22 11:49:39'),
 (5, 'Scooter Work Shop', 'Sistem informasi manajemen suku cadang scooter.', 'https://github.com/saiful-akbar/scooter-work-shop/', '2022-05-22 11:49:39', '2022-05-22 11:49:39'),
 (6, 'PHP MVC', 'Kerangka kerja php native mvc', 'http://localhost/php-mvc/', '2022-05-22 11:49:39', '2022-05-22 11:49:39');
 
