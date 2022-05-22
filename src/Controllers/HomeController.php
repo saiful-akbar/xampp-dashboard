@@ -1,6 +1,7 @@
 <?php
 
 use Src\Core\Controller;
+use Src\Database\DB;
 use Src\Http\Request;
 use Src\Models\Project;
 
@@ -11,15 +12,28 @@ class HomeController extends Controller
    * 
    * @return
    */
-  public function index()
+  public function index(Request $request)
   {
-    $title = 'Home';
-    $projects = Project::all();
+    $query = DB::table('projects');
+
+    if (
+      isset($request->input->search) &&
+      !empty($request->input->search)
+    ) {
+      $query->whereFullText(['description', 'name'], $request->input->search);
+    } else {
+      $query->select();
+    }
+
+    $projects = $query->orderBy('name', 'asc')->get();
 
     return layout(
       view: 'layouts.app',
       content: 'home',
-      data: compact('title', 'projects'),
+      data: [
+        'title' => 'Home',
+        'projects' => $projects,
+      ],
     );
   }
 

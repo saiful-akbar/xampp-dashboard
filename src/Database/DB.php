@@ -2,7 +2,7 @@
 
 namespace Src\Database;
 
-use Src\Database\SqlQueryBuilder;
+use Src\Database\QueryBuilder;
 
 /**
  * Database DB class
@@ -12,9 +12,9 @@ class DB
   /**
    * SQL Query builder
    * 
-   * @var SqlQueryBuilder|null|null
+   * @var QueryBuilder|null|null
    */
-  public static ?SqlQueryBuilder $builder = null;
+  public static ?QueryBuilder $builder = null;
 
   /**
    * Constructor
@@ -25,14 +25,14 @@ class DB
   }
 
   /**
-   * Set properti builder dengan class SqlQueryBuilder
+   * Set properti builder dengan class QueryBuilder
    * 
-   * @return SqlQueryBuilder
+   * @return QueryBuilder
    */
-  protected static function setBuilder(): SqlQueryBuilder
+  protected static function setBuilder(): QueryBuilder
   {
     if (is_null(self::$builder)) {
-      self::$builder = new SqlQueryBuilder();
+      self::$builder = new QueryBuilder();
     }
 
     return self::$builder;
@@ -43,9 +43,9 @@ class DB
    * 
    * @param string $table
    * 
-   * @return SqlQueryBuilder
+   * @return QueryBuilder
    */
-  public static function table(string $table): SqlQueryBuilder
+  public static function table(string $table): QueryBuilder
   {
     self::setBuilder();
     self::$builder->table($table);

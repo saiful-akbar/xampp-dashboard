@@ -8,6 +8,26 @@
 
 <hr class="my-5">
 
+<div class="row">
+  <div class="col-sm-12 col-md-4 col-lg-6 mb-4">
+    <button class="btn btn-dark shadow-sm">
+      <i class="bi bi-plus-lg me-1"></i>
+      <span>Add New Project</span>
+    </button>
+  </div>
+
+  <div class="col-sm-12 col-md-8 col-lg-6 mb-4">
+    <form autocomplete="off" method="GET" action="<?= route('home/index') ?>">
+      <div class="input-group">
+        <input type="search" name="search" id="search" value="<?php e($_GET['search'] ?? '') ?>" class="form-control" placeholder="Search projects..." />
+        <button class="btn btn-outline-secondary" type="submit">
+          Search
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- List project -->
 <div class="row">
   <?php foreach ($projects as $project) : ?>
