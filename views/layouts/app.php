@@ -1,3 +1,10 @@
+<?php
+
+use Src\Http\Session;
+use Src\Views\Header;
+
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -19,10 +26,19 @@
 </head>
 
 <body>
-  <?php \Src\Views\Header::render() ?>
+  <?php Header::render() ?>
+
+  <?php if(Session::isFlash('alert')) : ?>
+    <div class="alert alert-<?php e(Session::getFlash('alert')->type) ?> alert-dismissible fade show shadow-sm my-0 " style="border-radius: 0;">
+      <button class="btn-close" data-bs-dismiss="alert"></button>
+      <p class="mb-0">
+        <?php e(Session::getFlash('alert')->message); ?>
+      </p>
+    </div>
+  <?php endif; ?>
 
   <!-- Content -->
-  <div class="container py-4">
+  <div class="container py-5">
     <?php require __DIR__ . "/../../views/{$content}.php"; ?>
   </div>
 

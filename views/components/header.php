@@ -15,7 +15,7 @@
             PHP Info
           </a>
 
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu shadow">
             <li>
               <a class="dropdown-item" href="<?= route('home/phpInfo', ['version' => '8.1']); ?>" target="_blank">
                 PHP v8.1

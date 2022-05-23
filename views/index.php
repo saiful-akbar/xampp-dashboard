@@ -1,6 +1,8 @@
+<?php use Src\Http\Session;  ?>
+
 <!-- Header -->
 <div class="row">
-  <div class="col-12">
+  <div class="col-sm-12">
     <h1>Welcome to <?= config('app.name'); ?></h1>
     <p class="lead mb-0"><?= config('app.description'); ?></p>
   </div>
@@ -10,10 +12,10 @@
 
 <div class="row">
   <div class="col-sm-12 col-md-4 col-lg-6 mb-4">
-    <button class="btn btn-dark shadow-sm">
+    <a href="<?= route('home/store') ?>" class="btn btn-dark shadow-sm" role="button">
       <i class="bi bi-plus-lg me-1"></i>
       <span>Add New Project</span>
-    </button>
+    </a>
   </div>
 
   <div class="col-sm-12 col-md-8 col-lg-6 mb-4">
