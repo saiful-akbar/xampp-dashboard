@@ -33,6 +33,85 @@ class HomeController extends Controller
   }
 
   /**
+   * View create projetc
+   * 
+   * @return mixed
+   */
+  public function add(): mixed
+  {
+    return layout(
+      view: 'layouts/app',
+      content: 'add',
+      data: ['title' => 'Add New Project']
+    );
+  }
+
+  /**
+   * Insert 1 row ke database
+   * 
+   * @param Request $request
+   * 
+   * @return mixed
+   */
+  public function store(Request $request): mixed
+  {
+    // Cek method
+    if ($request->method != 'POST') {
+      header('Location: ' . route('home/create'));
+    }
+
+    // Varibel untuk menampung error
+    $errors = [];
+
+    // Ambil url dari database
+    $availableUrl = DB::table('projects')
+      ->select('url')
+      ->where('url', '=', $request->input->url)
+      ->first();
+
+    // Cek apakah url sudah digunakan atau belum.
+    // Jika sudah digunakan tambahkan errors
+    if ($availableUrl) {
+      $errors['url'] = 'The same url is already in use.';
+    }
+
+    // Cek apakah nama kosong atau tidak
+    // Jika kosong tambahkan errors
+    if (empty(trim($request->input->name))) {
+      $errors['name'] = 'Project name is required';
+    }
+
+    // Kembali ke halaman create project
+    // Serta kirimkan pesan error & old value-nya
+    if (count($errors) > 0) {
+      Session::flash('old', (array) $request?->input);
+      Session::flash('errors', $errors);
+
+      return header('Location: ' . route('home/add'));
+    }
+
+    // Insert ke database jika semua validasi lolos
+    try {
+      DB::table('projects')->insert([
+        'name' => $request->input->name,
+        'url' => $request->input->url,
+        'description' => $request->input->description,
+      ]);
+    } catch (\Throwable $th) {
+      throw new PDOException($th->getMessage());
+    }
+
+    // Set session flash success
+    Session::flash('alert', [
+      'type' => 'success',
+      'message' => '1 new project added successfully.',
+    ]);
+
+    // redirect ke halaman home
+    return header('Location: ' . route('home/add'));
+  }
+
+  /**
    * View phpinfo()
    * 
    * @return void
@@ -57,68 +136,5 @@ class HomeController extends Controller
 
     header("Location: http://localhost:{$port}/phpinfo.php");
     exit();
-  }
-
-  /**
-   * View create projetc
-   * 
-   * @return mixed
-   */
-  public function create(): mixed
-  {
-    return layout(
-      view: 'layouts/app',
-      content: 'create',
-      data: ['title' => 'Add New Project']
-    );
-  }
-
-  public function store(Request $request)
-  {
-    $projects = [
-      [
-        'name' => 'PHPMyAdmin',
-        'description' => 'Database (MariaDB).',
-        'url' => 'http://localhost/phpmyadmin/',
-      ],
-      [
-        'name' => 'PHP MVC',
-        'description' => 'Kerangka untuk pembuatan native php dengan metode mvc (model, view, controller).',
-        'url' => 'http://localhost/php-mvc/',
-      ],
-      [
-        'name' => 'Feelbuy Helpdesk',
-        'description' => 'Feelbuy technology system.',
-        'url' => 'http://localhost:8056/php-5/feelbuy-helpdesk/',
-      ],
-      [
-        'name' => 'Slow Motor Inventory',
-        'description' => 'Sistem infomasi manajemen stok suku cadang motor.',
-        'url' => 'http://localhost/slow-motor-inventory/',
-      ],
-      [
-        'name' => 'IO Dev',
-        'description' => 'My portfolio web app.',
-        'url' => 'https://iodev.vercel.app/',
-      ],
-    ];
-
-    try {
-      foreach ($projects as $project) {
-        DB::table('projects')->insert($project);
-      }
-
-      Session::flash('alert', [
-        'type' => 'success',
-        'message' => 'Insert projects into database successfuly.',
-      ]);
-    } catch (PDOException $e) {
-      Session::flash('alert', [
-        'type' => 'danger',
-        'message' => $e->getMessage(),
-      ]);
-    }
-
-    return header('Location: ' . route('home/index'));
   }
 }

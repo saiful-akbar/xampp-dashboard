@@ -144,6 +144,19 @@ class QueryBuilder
   }
 
   /**
+   * Set value for binding
+   * 
+   * @param string $key
+   * @param string $value
+   * 
+   * @return void
+   */
+  protected function setBindValue(string $key, string $value): void
+  {
+    $this->bindValue = [$key => $value];
+  }
+
+  /**
    * Binding value
    * 
    * @param array $params
@@ -184,27 +197,26 @@ class QueryBuilder
   /**
    * Eksekusi query
    * 
-   * @return QueryBuilder
+   * @return int
    */
-  public function execute(): QueryBuilder
+  public function execute(): int
   {
     $this->stmt->execute();
 
-    return $this;
+    return $this->stmt->rowCount();
   }
 
   /**
    * Query select
    * 
-   * @param array|string $fields
+   * @param mixed $fields
    * 
    * @return QueryBuilder
    */
-  public function select(array|string $columns = '*'): QueryBuilder
+  public function select(mixed $columns = ['*']): QueryBuilder
   {
-    if (is_array($columns)) {
-      $columns = implode(", ", $columns);
-    }
+    $columns = is_array($columns) ? $columns : func_get_args();
+    $columns = implode(", ", $columns);
 
     $this->sql = "SELECT {$columns} FROM {$this->table}";
 
@@ -261,9 +273,9 @@ class QueryBuilder
   /**
    * Mengambil 1 data dari hasil pertama query
    * 
-   * @return object
+   * @return bool|object
    */
-  public function first(): object
+  public function first(): bool|object
   {
     $this->limit(1);
     $this->query($this->sql);
@@ -300,9 +312,9 @@ class QueryBuilder
    * 
    * @param array $params
    * 
-   * @return void
+   * @return int
    */
-  public function insert(array $data): void
+  public function insert(array $data): int
   {
     $columns = implode(', ', array_keys($data));
     $values = ':' . implode(', :', array_keys($data));
@@ -311,7 +323,8 @@ class QueryBuilder
 
     $this->query($this->sql);
     $this->bind($data);
-    $this->execute();
+
+    return $this->execute();
   }
 
   /**
@@ -327,8 +340,62 @@ class QueryBuilder
     $columns = is_array($columns) ? implode(', ', $columns) : $columns;
     $columns = htmlspecialchars(trim($columns));
 
-    $this->sql = "SELECT * FROM {$this->table} WHERE MATCH({$columns}) AGAINST(:value IN NATURAL LANGUAGE MODE)";
-    $this->bindValue = ['value' => $value];
+    $this->sql .= " WHERE MATCH({$columns}) AGAINST(:value IN NATURAL LANGUAGE MODE)";
+    $this->setBindValue('value', $value);
+
+    return $this;
+  }
+
+  /**
+   * Where query
+   * 
+   * @param string $column
+   * @param string $operator
+   * @param string $value
+   * 
+   * @return QueryBuilder
+   */
+  public function where(string $column, string $operator, string $value): QueryBuilder
+  {
+    $this->sql .= " WHERE {$column} {$operator} :{$column}";
+
+    $this->setBindValue($column, $value);
+
+    return $this;
+  }
+
+  /**
+   * Or where query
+   * 
+   * @param string $column
+   * @param string $operator
+   * @param string $value
+   * 
+   * @return QueryBuilder
+   */
+  public function orWhere(string $column, string $operator, string $value): QueryBuilder
+  {
+    $this->sql .= " OR WHERE {$column} {$operator} :{$column}";
+
+    $this->setBindValue($column, $value);
+
+    return $this;
+  }
+
+  /**
+   * And where query
+   * 
+   * @param string $column
+   * @param string $operator
+   * @param string $value
+   * 
+   * @return QueryBuilder
+   */
+  public function andWhere(string $column, string $operator, string $value): QueryBuilder
+  {
+    $this->sql .= " AND WHERE {$column} {$operator} :{$column}";
+
+    $this->setBindValue($column, $value);
 
     return $this;
   }

@@ -1,5 +1,3 @@
-<?php use Src\Http\Session;  ?>
-
 <!-- Header -->
 <div class="row">
   <div class="col-sm-12">
@@ -12,7 +10,7 @@
 
 <div class="row">
   <div class="col-sm-12 col-md-4 col-lg-6 mb-4">
-    <a href="<?= route('home/store') ?>" class="btn btn-dark shadow-sm" role="button">
+    <a href="<?= route('home/add') ?>" class="btn btn-dark bg-gradient shadow-sm" role="button">
       <i class="bi bi-plus-lg me-1"></i>
       <span>Add New Project</span>
     </a>
@@ -20,10 +18,12 @@
 
   <div class="col-sm-12 col-md-8 col-lg-6 mb-4">
     <form autocomplete="off" method="GET" action="<?= route('home/index') ?>">
+      <input type="hidden" name="route" value="home/index">
+
       <div class="input-group">
         <input type="search" name="search" id="search" value="<?php e($search) ?>" class="form-control" placeholder="Search projects..." />
-        <button class="btn btn-outline-secondary" type="submit">
-          Search
+        <button type="submit" class="btn btn-outline-secondary bg-gradient ">
+          <i class="bi bi-search"></i>
         </button>
       </div>
     </form>

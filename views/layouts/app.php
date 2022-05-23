@@ -28,9 +28,11 @@ use Src\Views\Header;
 <body>
   <?php Header::render() ?>
 
-  <?php if(Session::isFlash('alert')) : ?>
+  <!-- Notifikasi alert -->
+  <?php if (Session::getFlash('alert')) : ?>
     <div class="alert alert-<?php e(Session::getFlash('alert')->type) ?> alert-dismissible fade show shadow-sm my-0 " style="border-radius: 0;">
       <button class="btn-close" data-bs-dismiss="alert"></button>
+
       <p class="mb-0">
         <?php e(Session::getFlash('alert')->message); ?>
       </p>

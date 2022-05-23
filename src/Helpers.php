@@ -1,5 +1,7 @@
 <?php
 
+use Src\Http\Session;
+
 if (!function_exists('arrayToObject')) {
 
   /**
@@ -186,5 +188,63 @@ if (!function_exists('e')) {
     }
 
     echo htmlspecialchars($value);
+  }
+}
+
+if (!function_exists('old')) {
+
+  /**
+   * Mengampil value lama | old value
+   * 
+   * @param string $name
+   * @param string|null $default
+   * 
+   * @return string|null
+   */
+  function old(string $name, ?string $default = null): ?string
+  {
+    if (!Session::getFlash('old')) {
+      return $default;
+    }
+
+    $old = $default;
+
+    foreach (Session::getFlash('old') as $key => $value) {
+      if ($key == $name) {
+        $old = $value;
+      }
+    }
+
+    return $old;
+  }
+}
+
+if (!function_exists('error')) {
+
+  /**
+   * Mengampil data error pada session flash
+   * 
+   * @param string|null $name
+   * 
+   * @return mixed
+   */
+  function errors(?string $name = null): mixed
+  {
+    if (!Session::getFlash('errors')) {
+      return null;
+    }
+
+    if (empty($name)) {
+      return Session::getFlash('errors');
+    }
+
+    $error = null;
+    foreach (Session::getFlash('errors') as $key => $value) {
+      if ($key == $name) {
+        $error = $value;
+      }
+    }
+
+    return $error;
   }
 }

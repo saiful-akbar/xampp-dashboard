@@ -29,12 +29,10 @@ class Project extends DB
    */
   public static function findOrAll($search): array
   {
-    $query = parent::table(self::$table);
+    $query = parent::table(self::$table)->select();
 
     if (!empty($search)) {
       $query->whereFullText(['description', 'name'], $search);
-    } else {
-      $query->select();
     }
 
     return $query->orderBy('name', 'asc')->get();
