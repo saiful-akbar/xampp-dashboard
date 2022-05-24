@@ -33,4 +33,19 @@ class Project extends DB
 
     return $query->orderBy('name', 'asc')->get();
   }
+
+  /**
+   * Cek apakah url ada atau sudah digunakan
+   * 
+   * @param string $url
+   * 
+   * @return mixed
+   */
+  public static function availableUrl(string $url): mixed
+  {
+    return parent::table(self::$table)
+      ->select('url')
+      ->where('url', '=', $url)
+      ->first();
+  }
 }

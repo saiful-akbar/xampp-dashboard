@@ -58,71 +58,45 @@ class HomeController extends Controller
    */
   public function store(Request $request): mixed
   {
-    /**
-     * Cek request http method
-     */
+    // Cek request http method.
+    // Jika method bukan POST redirect ke halaman home.
     if ($request->method != 'POST') {
       return Response::toRoute('home/index');
     }
 
-    /**
-     * Ambil url dari database untuk validasi.
-     */
-    $availableUrl = DB::table('projects')
-      ->select('url')
-      ->where('url', '=', $request->input->url)
-      ->first();
-
-    /**
-     * variabel untuk menampung error
-     * 
-     * @var array
-     */
+    // variabel untuk menampung error
     $validatedResponse = [];
 
-    /**
-     * Validasi apa value dari nama kosong atau tidak.
-     */
+    // Validasi apa value dari nama kosong atau tidak.
     if (empty(trim($request->input->name))) {
       $validatedResponse['name'] = 'Project name is required';
     }
 
-    /**
-     * Validasi ukuran panjang name
-     */
+    // Validasi ukuran panjang name
     if (strlen($request->input->name) > 100) {
       $validatedResponse['name'] = 'The project name cannot be longer than 100 characters.';
     }
 
-    /**
-     * Validasi apakah url yang sama sudah digunakan atu belum.
-     */
-    if ($availableUrl) {
+    // Validasi apakah url yang sama sudah digunakan atu belum.
+    if (Project::availableUrl($request->input->url)) {
       $validatedResponse['url'] = 'The same url is already in use.';
     }
 
-    /**
-     * Validasi ukuran panjang url
-     */
+    // Validasi ukuran panjang url
     if (strlen($request->input->url) > 100) {
       $validatedResponse['url'] = 'Url cannot be more than 100 characters.';
     }
 
-    /**
-     * Cek jumlah pesan error.
-     * 
-     * Jika validasi gagal kembali ke halaman add project,
-     * Serta kirimkan pesan error dan old value-nya.
-     */
+    // Cek jumlah pesan error.
+    // Jika validasi gagal kembali ke halaman add project,
+    // Serta kirimkan pesan error dan old value-nya.
     if (count($validatedResponse) > 0) {
       return Response::toRoute('home/add')
         ->withFlash('errors', $validatedResponse)
         ->withOldInput((array) $request?->input);
     }
 
-    /**
-     * Insert ke database jika semua validasi lolos.
-     */
+    // Insert ke database jika semua validasi lolos.
     try {
       DB::table('projects')->insert([
         'name' => $request->input->name,
@@ -133,10 +107,8 @@ class HomeController extends Controller
       throw new PDOException($th->getMessage());
     }
 
-    /**
-     * Redirect ke halaman home.
-     * Dan kirimkan alert insert data berhasil.
-     */
+    // Redirect ke halaman home.
+    // Serta kirimkan alert insert data berhasil.
     return Response::toRoute('home/add')
       ->withFlash('alert', [
         'type' => 'success',
@@ -151,16 +123,10 @@ class HomeController extends Controller
    */
   public function phpInfo(Request $request): mixed
   {
-    /**
-     * Default port
-     * 
-     * @var string
-     */
+    // Default port
     $port = '80';
 
-    /**
-     * Cek versi php yang di-request.
-     */
+    // Cek versi php yang di-request.
     switch ($request->input->version) {
       case '5.6':
         $port = '8056';
@@ -175,9 +141,6 @@ class HomeController extends Controller
         break;
     }
 
-    /**
-     * Redirect & tampilkan phpinfo()
-     */
     return header("Location: http://localhost:{$port}/phpinfo.php");
   }
 }
