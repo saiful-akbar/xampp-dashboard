@@ -248,3 +248,20 @@ if (!function_exists('error')) {
     return $error;
   }
 }
+
+if (!function_exists('toRoute')) {
+
+  /**
+   * Helper redirect to route.
+   * 
+   * @param  string $route
+   * @param  array  $params
+   * 
+   * @return void
+   */
+  function toRoute(string $route, array $params = []): void
+  {
+    header('Location: ' . route($route, $params));
+    exit();
+  }
+}

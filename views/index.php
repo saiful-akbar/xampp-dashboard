@@ -22,8 +22,8 @@
 
       <div class="input-group">
         <input type="search" name="search" id="search" value="<?php e($search) ?>" class="form-control" placeholder="Search projects..." />
-        <button type="submit" class="btn btn-outline-secondary bg-gradient ">
-          <i class="bi bi-search"></i>
+        <button type="submit" class="btn btn-outline-dark bg-gradient">
+          <span>Search</span>
         </button>
       </div>
     </form>

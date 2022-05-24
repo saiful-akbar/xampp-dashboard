@@ -4,9 +4,9 @@ Custom dashboard for xampp htdocs.
 
 ## Requirements
 
-- PHP 8.x
-- composer
-- Terminal or Command Prompt
+- PHP 8.x.
+- composer.
+- Terminal.
 
 ## Instalation
 

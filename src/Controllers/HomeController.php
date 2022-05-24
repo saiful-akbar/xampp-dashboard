@@ -55,42 +55,60 @@ class HomeController extends Controller
    */
   public function store(Request $request): mixed
   {
-    // Cek method
+    /**
+     * Cek request http method
+     */
     if ($request->method != 'POST') {
-      header('Location: ' . route('home/create'));
+      return toRoute('home/add');
     }
 
-    // Varibel untuk menampung error
-    $errors = [];
+    /**
+     * variabel untuk menampung error
+     * 
+     * @var array
+     */
+    $validatedResponse = [];
 
-    // Ambil url dari database
+    /**
+     * Ambil url dari database untuk validasi.
+     */
     $availableUrl = DB::table('projects')
       ->select('url')
       ->where('url', '=', $request->input->url)
       ->first();
 
-    // Cek apakah url sudah digunakan atau belum.
-    // Jika sudah digunakan tambahkan errors
+    /**
+     * Cek apakah url yang sama sudah digunakan atu belum.
+     * Jika sidah berikan pesan error.
+     */
     if ($availableUrl) {
-      $errors['url'] = 'The same url is already in use.';
+      $validatedResponse['url'] = 'The same url is already in use.';
     }
 
-    // Cek apakah nama kosong atau tidak
-    // Jika kosong tambahkan errors
+    /**
+     * Cek apa value dari nama kosong atau tidak.
+     * Jika kosong berikan pesan error.
+     */
     if (empty(trim($request->input->name))) {
-      $errors['name'] = 'Project name is required';
+      $validatedResponse['name'] = 'Project name is required';
     }
 
-    // Kembali ke halaman create project
-    // Serta kirimkan pesan error & old value-nya
-    if (count($errors) > 0) {
+    /**
+     * Cek jumlah pesan error.
+     * 
+     * Jika validasi gagal kembali ke halaman add project,
+     * Serta kirimkan pesan error dan old value-nya.
+     */
+    if (count($validatedResponse) > 0) {
       Session::flash('old', (array) $request?->input);
-      Session::flash('errors', $errors);
+      Session::flash('errors', $validatedResponse);
 
-      return header('Location: ' . route('home/add'));
+      return toRoute('home/add');
     }
 
-    // Insert ke database jika semua validasi lolos
+    /**
+     * Insert ke database jika semua validasi lolos.
+     */
     try {
       DB::table('projects')->insert([
         'name' => $request->input->name,
@@ -101,25 +119,37 @@ class HomeController extends Controller
       throw new PDOException($th->getMessage());
     }
 
-    // Set session flash success
+    /**
+     * Buat notifikasi insert data berhasil.
+     */
     Session::flash('alert', [
       'type' => 'success',
       'message' => '1 new project added successfully.',
     ]);
 
-    // redirect ke halaman home
-    return header('Location: ' . route('home/add'));
+    /**
+     * Redirect ke halaman home
+     */
+    return toRoute('home/add');
   }
 
   /**
    * View phpinfo()
    * 
-   * @return void
+   * @return mixed
    */
-  public function phpInfo(Request $request): void
+  public function phpInfo(Request $request): mixed
   {
+    /**
+     * Default port
+     * 
+     * @var string
+     */
     $port = '80';
 
+    /**
+     * Cek versi php yang di-request.
+     */
     switch ($request->input->version) {
       case '5.6':
         $port = '8056';
@@ -134,7 +164,9 @@ class HomeController extends Controller
         break;
     }
 
-    header("Location: http://localhost:{$port}/phpinfo.php");
-    exit();
+    /**
+     * Redirect & tampilkan phpinfo()
+     */
+    return header("Location: http://localhost:{$port}/phpinfo.php");
   }
 }

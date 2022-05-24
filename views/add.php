@@ -98,7 +98,7 @@
     <div class="alert alert-info shadow-sm mb-0" role="alert">
       <h5 class="alert-heading">Info</h5>
       <hr>
-      <p class="mb-0">Form with (*) is required.</p>
+      <p class="mb-0">Form with (<small class="text-danger">*</small>) is required.</p>
     </div>
   </div>
 </div>
