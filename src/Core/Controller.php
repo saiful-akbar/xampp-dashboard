@@ -5,7 +5,7 @@ namespace Src\Core;
 /**
  * Controller core class
  */
-class Controller
+abstract class Controller
 {
   /**
    * Mengambil view
@@ -31,10 +31,10 @@ class Controller
    * 
    * @return void
    */
-  protected function layout(string $layout, string $content, array $data): mixed
+  protected function layout(string $view, string $content, array $data): mixed
   {
     return layout(
-      view: $layout,
+      view: $view,
       content: $content,
       data: $data,
     );

@@ -6,7 +6,7 @@
       "Src\\": "src/"
     },
     "files": [
-      "src/Helpers.php"
+      "src/FunctionHelper.php"
     ]
   },
   "authors": [

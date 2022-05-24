@@ -1,11 +1,11 @@
 <?php
 
-namespace Src\Http;
+namespace Src\Session;
 
 /**
  * Http session class
  */
-class Session
+class Flash
 {
 
 	/**
@@ -23,7 +23,7 @@ class Session
 	 * 
 	 * @return void
 	 */
-	public static function flash(string $name, array $value = null): void
+	public static function set(string $name, array $value = null): void
 	{
 		$_SESSION[$name] = $value;
 	}
@@ -34,7 +34,7 @@ class Session
 	 * @param  string $name
 	 * @return mixed
 	 */
-	public static function getFlash(string $name): mixed
+	public static function get(string $name): mixed
 	{
 		if (isset($_SESSION[$name])) {
 			self::$flashValues[$name] = $_SESSION[$name];

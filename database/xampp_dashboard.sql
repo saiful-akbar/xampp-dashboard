@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 22, 2022 at 07:09 PM
+-- Generation Time: May 24, 2022 at 07:05 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -21,19 +21,6 @@ SET time_zone = "+00:00";
 -- Database: `xampp_dashboard`
 --
 
-DELIMITER $$
---
--- Procedures
---
-CREATE DEFINER=`xampp_dashboard`@`localhost` PROCEDURE `insert_projects` (IN `$name` VARCHAR(50), IN `$description` TEXT, IN `$url` VARCHAR(100))   BEGIN
-
-INSERT INTO `projects`(`name`, `description`, `url`)
-VALUES(`$name`, `$description`, `$url`);
-
-END$$
-
-DELIMITER ;
-
 -- --------------------------------------------------------
 
 --
@@ -42,24 +29,21 @@ DELIMITER ;
 
 CREATE TABLE `projects` (
   `id` bigint(20) UNSIGNED NOT NULL COMMENT 'Primary key',
-  `name` varchar(50) NOT NULL COMMENT 'Nama project',
-  `description` text DEFAULT NULL COMMENT 'Deksripsi project',
-  `url` varchar(50) NOT NULL COMMENT 'Url project',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'Waktu dibuat',
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'Waktu diperbarui'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `name` varchar(100) NOT NULL COMMENT 'Project name',
+  `url` varchar(100) NOT NULL COMMENT 'Project url',
+  `description` text DEFAULT NULL COMMENT 'Project description',
+  `created_at` timestamp NULL DEFAULT current_timestamp() COMMENT 'Created at',
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Updated at'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Tables for application projects';
 
 --
 -- Dumping data for table `projects`
 --
 
-INSERT INTO `projects` (`id`, `name`, `description`, `url`, `created_at`, `updated_at`) VALUES
-(1, 'phpMyAdmin', 'Database (MariaDB)', 'http://localhost/phpmyadmin/', '2022-05-22 11:49:39', '2022-05-22 11:49:39'),
-(2, 'Feelbuy Helpdesk', 'Feelbuy technology system', 'http://localhost:8056/php-5/feelbuy-helpdesk/', '2022-05-22 11:49:39', '2022-05-22 11:49:39'),
-(3, 'IO Dev', 'Ipul & Opan Web Portfolio', 'https://iodev.vercel.app/', '2022-05-22 11:49:39', '2022-05-22 11:49:39'),
-(4, 'Si-IBU', 'Sistem Informasi Bagian Umum', 'https://github.com/saiful-akbar/si-ibu/', '2022-05-22 11:49:39', '2022-05-22 11:49:39'),
-(5, 'Scooter Work Shop', 'Sistem informasi manajemen suku cadang scooter.', 'https://github.com/saiful-akbar/scooter-work-shop/', '2022-05-22 11:49:39', '2022-05-22 11:49:39'),
-(6, 'PHP MVC', 'Kerangka kerja php native mvc', 'http://localhost/php-mvc/', '2022-05-22 11:49:39', '2022-05-22 11:49:39');
+INSERT INTO `projects` (`id`, `name`, `url`, `description`, `created_at`, `updated_at`) VALUES
+(1, 'PHPMyAdmin', 'http://localhost/phpmyadmin/', 'MariaDB database', '2022-05-24 16:59:02', '2022-05-24 16:59:02'),
+(2, 'PHP MVC', 'http://localhost/php-mvc/', 'Framework for native php creation with mvc method (model, view, controller)', '2022-05-24 17:01:03', '2022-05-24 17:01:03'),
+(3, 'IO Dev', 'https://iodev.vercel.app/', 'My portfolio web app.', '2022-05-24 17:02:18', '2022-05-24 17:02:18');
 
 --
 -- Indexes for dumped tables
@@ -70,7 +54,7 @@ INSERT INTO `projects` (`id`, `name`, `description`, `url`, `created_at`, `updat
 --
 ALTER TABLE `projects`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_url` (`url`) USING BTREE;
+  ADD UNIQUE KEY `unique_url` (`url`);
 ALTER TABLE `projects` ADD FULLTEXT KEY `fulltext_name_description` (`name`,`description`);
 
 --
@@ -81,7 +65,7 @@ ALTER TABLE `projects` ADD FULLTEXT KEY `fulltext_name_description` (`name`,`des
 -- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Primary key', AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Primary key', AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

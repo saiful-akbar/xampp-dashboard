@@ -1,6 +1,6 @@
 <?php
 
-use Src\Http\Session;
+use Src\Session\Flash;
 
 if (!function_exists('arrayToObject')) {
 
@@ -136,6 +136,23 @@ if (!function_exists('isRoute')) {
   }
 }
 
+if (!function_exists('toRoute')) {
+
+  /**
+   * Helper redirect to route.
+   * 
+   * @param  string $route
+   * @param  array  $params
+   * 
+   * @return void
+   */
+  function toRoute(string $route, array $params = []): void
+  {
+    header('Location: ' . route($route, $params));
+    exit();
+  }
+}
+
 if (!function_exists('url')) {
 
   /**
@@ -145,11 +162,11 @@ if (!function_exists('url')) {
    * 
    * @return string
    */
-  function url(string $path = '/', array $params = []): string
+  function url(string $path, array $params = []): string
   {
-    $url = trim(config('app.url'), '/');
-    $url .= '/';
-    $url .= trim($path, '/');
+    $configUrl = trim(config('app.url'), '/');
+    $path = trim(trim($path), '/');
+    $url = $configUrl . '/' . $path;
 
     // Cek params
     if (count($params) > 0) {
@@ -203,13 +220,13 @@ if (!function_exists('old')) {
    */
   function old(string $name, ?string $default = null): ?string
   {
-    if (!Session::getFlash('old')) {
+    if (!Flash::get('old')) {
       return $default;
     }
 
     $old = $default;
 
-    foreach (Session::getFlash('old') as $key => $value) {
+    foreach (Flash::get('old') as $key => $value) {
       if ($key == $name) {
         $old = $value;
       }
@@ -230,38 +247,21 @@ if (!function_exists('error')) {
    */
   function errors(?string $name = null): mixed
   {
-    if (!Session::getFlash('errors')) {
+    if (!Flash::get('errors')) {
       return null;
     }
 
     if (empty($name)) {
-      return Session::getFlash('errors');
+      return Flash::get('errors');
     }
 
     $error = null;
-    foreach (Session::getFlash('errors') as $key => $value) {
+    foreach (Flash::get('errors') as $key => $value) {
       if ($key == $name) {
         $error = $value;
       }
     }
 
     return $error;
-  }
-}
-
-if (!function_exists('toRoute')) {
-
-  /**
-   * Helper redirect to route.
-   * 
-   * @param  string $route
-   * @param  array  $params
-   * 
-   * @return void
-   */
-  function toRoute(string $route, array $params = []): void
-  {
-    header('Location: ' . route($route, $params));
-    exit();
   }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use Src\Http\Session;
+use Src\Session\Flash;
 use Src\Views\Header;
 
 ?>
@@ -29,12 +29,12 @@ use Src\Views\Header;
   <?php Header::render() ?>
 
   <!-- Notifikasi alert -->
-  <?php if (Session::getFlash('alert')) : ?>
-    <div class="alert alert-<?php e(Session::getFlash('alert')->type) ?> alert-dismissible fade show shadow-sm my-0 " style="border-radius: 0;">
+  <?php if (Flash::get('alert')) : ?>
+    <div class="alert alert-<?php e(Flash::get('alert')->type) ?> alert-dismissible fade show shadow-sm my-0 " style="border-radius: 0;">
       <button class="btn-close" data-bs-dismiss="alert"></button>
 
       <p class="mb-0">
-        <?php e(Session::getFlash('alert')->message); ?>
+        <?php e(Flash::get('alert')->message); ?>
       </p>
     </div>
   <?php endif; ?>

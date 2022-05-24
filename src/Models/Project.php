@@ -16,10 +16,6 @@ class Project extends DB
    */
   protected static $table = 'projects';
 
-  protected static $db;
-
-
-
   /**
    * Mengambil semua data project
    * 

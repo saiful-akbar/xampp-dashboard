@@ -1,11 +1,14 @@
 <?php
 
-use Src\Database\DB;
 use Src\Core\Controller;
+use Src\Database\DB;
 use Src\Http\Request;
-use Src\Http\Session;
+use Src\Http\Response;
 use Src\Models\Project;
 
+/**
+ * Home Controller
+ */
 class HomeController extends Controller
 {
   /**
@@ -13,7 +16,7 @@ class HomeController extends Controller
    * 
    * @return
    */
-  public function index(Request $request)
+  public function index(Request $request): mixed
   {
     $search = null;
 
@@ -59,15 +62,8 @@ class HomeController extends Controller
      * Cek request http method
      */
     if ($request->method != 'POST') {
-      return toRoute('home/add');
+      return Response::toRoute('home/index');
     }
-
-    /**
-     * variabel untuk menampung error
-     * 
-     * @var array
-     */
-    $validatedResponse = [];
 
     /**
      * Ambil url dari database untuk validasi.
@@ -78,19 +74,38 @@ class HomeController extends Controller
       ->first();
 
     /**
-     * Cek apakah url yang sama sudah digunakan atu belum.
-     * Jika sidah berikan pesan error.
+     * variabel untuk menampung error
+     * 
+     * @var array
+     */
+    $validatedResponse = [];
+
+    /**
+     * Validasi apa value dari nama kosong atau tidak.
+     */
+    if (empty(trim($request->input->name))) {
+      $validatedResponse['name'] = 'Project name is required';
+    }
+
+    /**
+     * Validasi ukuran panjang name
+     */
+    if (strlen($request->input->name) > 100) {
+      $validatedResponse['name'] = 'The project name cannot be longer than 100 characters.';
+    }
+
+    /**
+     * Validasi apakah url yang sama sudah digunakan atu belum.
      */
     if ($availableUrl) {
       $validatedResponse['url'] = 'The same url is already in use.';
     }
 
     /**
-     * Cek apa value dari nama kosong atau tidak.
-     * Jika kosong berikan pesan error.
+     * Validasi ukuran panjang url
      */
-    if (empty(trim($request->input->name))) {
-      $validatedResponse['name'] = 'Project name is required';
+    if (strlen($request->input->url) > 100) {
+      $validatedResponse['url'] = 'Url cannot be more than 100 characters.';
     }
 
     /**
@@ -100,10 +115,9 @@ class HomeController extends Controller
      * Serta kirimkan pesan error dan old value-nya.
      */
     if (count($validatedResponse) > 0) {
-      Session::flash('old', (array) $request?->input);
-      Session::flash('errors', $validatedResponse);
-
-      return toRoute('home/add');
+      return Response::toRoute('home/add')
+        ->withFlash('errors', $validatedResponse)
+        ->withOldInput((array) $request?->input);
     }
 
     /**
@@ -120,17 +134,14 @@ class HomeController extends Controller
     }
 
     /**
-     * Buat notifikasi insert data berhasil.
+     * Redirect ke halaman home.
+     * Dan kirimkan alert insert data berhasil.
      */
-    Session::flash('alert', [
-      'type' => 'success',
-      'message' => '1 new project added successfully.',
-    ]);
-
-    /**
-     * Redirect ke halaman home
-     */
-    return toRoute('home/add');
+    return Response::toRoute('home/add')
+      ->withFlash('alert', [
+        'type' => 'success',
+        'message' => '1 new project added successfully.',
+      ]);
   }
 
   /**
