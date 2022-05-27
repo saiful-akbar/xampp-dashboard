@@ -15,15 +15,12 @@ use Src\Views\Header;
   <meta name="description" content="<?= config('app.description'); ?>">
 
   <!-- Title -->
-  <title>
-    <?= $title . ' - ' . config('app.name'); ?>
-  </title>
+  <title><?= $title . ' - ' . config('app.name'); ?></title>
 
   <!-- Icon -->
   <link rel="shortcut icon" href="<?= url('/favicon.png'); ?>" type="image/x-icon">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="<?= url('/assets/css/bootstrap.min.css') ?>">
   <link rel="stylesheet" href="<?= url('/assets/css/app.css'); ?>">
 </head>
 
@@ -47,8 +44,9 @@ use Src\Views\Header;
   </div>
 
   <!-- JS -->
-  <script src="<?= url('/assets/js/bootstrap.bundle.min.js') ?>"></script>
-  <script src="<?= url('/assets/js/app.js') ?>"></script>
+  <script type="text/javascript" src="<?= url('/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
+  <script type="text/javascript" src="<?= url('/assets/vendor/jquery/jquery-3.6.0.min.js') ?>"></script>
+  <script type="text/javascript" src="<?= url('/assets/js/app.js') ?>"></script>
 </body>
 
 </html>

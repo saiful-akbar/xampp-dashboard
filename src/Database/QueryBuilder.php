@@ -48,9 +48,9 @@ class QueryBuilder
   /**
    * Value untuk binding data
    * 
-   * @var array|null
+   * @var array
    */
-  private array $bindValue = [];
+  protected array $bindValue = [];
 
   /**
    * Set properti & jalankan koneksi database
@@ -81,24 +81,22 @@ class QueryBuilder
    * Set value for binding
    * 
    * @param string $key
-   * @param string $value
+   * @param string|int|bool|null $value
    * 
    * @return void
    */
-  protected function setBindValue(string $key, string $value): void
+  public function setBindValue(string $key, string|int|bool|null $value): void
   {
     $this->bindValue[$key] = $value;
   }
 
   /**
-   * Eksekusi query
+   * Binding value
    * 
-   * @return int
+   * @return void
    */
-  public function run(): int
+  public function bind(): void
   {
-    $this->stmt = $this->dbh->prepare(trim($this->sql));
-
     if (count($this->bindValue) > 0) {
       foreach ($this->bindValue as $key => $value) {
         switch ($value) {
@@ -121,7 +119,19 @@ class QueryBuilder
         $this->stmt->bindValue($key, trim($value), $type);
       }
     }
+  }
 
+  /**
+   * Eksekusi query
+   * 
+   * @return int
+   */
+  public function run(): int
+  {
+    $sql = trim($this->sql);
+
+    $this->stmt = $this->dbh->prepare($sql);
+    $this->bind();
     $this->stmt->execute();
 
     return $this->stmt->rowCount();
@@ -205,7 +215,7 @@ class QueryBuilder
   {
     $this->sql .= "OR {$column} {$operator} :{$column} ";
     $this->setBindValue($column, $value);
-    
+
     return $this;
   }
 
@@ -222,7 +232,7 @@ class QueryBuilder
   {
     $this->sql .= "NOT {$column} {$operator} :{$column} ";
     $this->setBindValue($column, $value);
-    
+
     return $this;
   }
 
@@ -314,14 +324,14 @@ class QueryBuilder
    * 
    * @param array $params
    * 
-   * @return int
+   * @return QueryBuilder
    */
   public function insert(array $data): QueryBuilder
   {
     $columns = implode(', ', array_keys($data));
     $values = ':' . implode(', :', array_keys($data));
 
-    $this->sql = "INSERT INTO {$this->table} ($columns) VALUES ($values)";
+    $this->sql = "INSERT INTO {$this->table} ({$columns}) VALUES ({$values})";
 
     foreach ($data as $key => $value) {
       $this->setBindValue($key, $value);

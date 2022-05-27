@@ -1,10 +1,3 @@
-/**
- * Handle delete
- * 
- * @param {string} href
- * 
- * @return void
- */
 const handleDelete = (href) => {
   const confirmation = confirm('Are you sure you want to delete this data?');
 
@@ -12,3 +5,8 @@ const handleDelete = (href) => {
     window.location.href = href;
   }
 }
+
+(function() {
+  [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(el => new bootstrap.Tooltip(el));
+})();
+

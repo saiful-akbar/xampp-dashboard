@@ -96,13 +96,16 @@ class HomeController extends Controller
         ->withOldInput((array) $request?->input);
     }
 
+    $data['name'] = $request->input->name;
+    $data['url'] = $request->input->url;
+
+    if (!empty($request->input->description)) {
+      $data['description'] =  $request->input->description;
+    }
+
     // Insert ke database jika semua validasi lolos.
     try {
-      Project::insert([
-        'name' => $request->input->name,
-        'url' => $request->input->url,
-        'description' => $request->input->description,
-      ]);
+      Project::insert($data);
     } catch (\Throwable $th) {
       throw new PDOException($th->getMessage());
     }
@@ -120,9 +123,9 @@ class HomeController extends Controller
    * 
    * @param  Request $request
    * 
-   * @return Response
+   * @return mixed
    */
-  public function delete(Request $request): Response
+  public function delete(Request $request): mixed
   {
     // Cek apakah id dikirim atau tidak
     if (!isset($request->input->id) || empty($request->input->id)) {
@@ -146,10 +149,10 @@ class HomeController extends Controller
 
     // Response jika proses delete berhasil
     return Response::toRoute('home/index')
-        ->withFlash('alert', [
-          'type' => 'success',
-          'message' => '1 Project deleted successfully.',
-        ]);
+      ->withFlash('alert', [
+        'type' => 'success',
+        'message' => '1 Project deleted successfully.',
+      ]);
   }
 
   /**

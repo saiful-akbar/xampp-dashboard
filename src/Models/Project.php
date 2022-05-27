@@ -3,6 +3,7 @@
 namespace Src\Models;
 
 use Src\Database\DB;
+use stdClass;
 
 /**
  * Model project class
@@ -12,17 +13,24 @@ class Project extends DB
   /**
    * Nama tabel
    * 
-   * @var string
+   * @var int|string
    */
   protected static $table = 'projects';
 
-  public static function find(int $id)
+  /**
+   * Find project
+   * 
+   * @param int|string $id
+   * 
+   * @return mixed
+   */
+  public static function find(int|string $id): mixed
   {
-      return parent::table(self::$table)
-        ->select()
-        ->where('id', '=', $id)
-        ->limit(1)
-        ->first();
+    return parent::table(self::$table)
+      ->select()
+      ->where('id', '=', $id)
+      ->limit(1)
+      ->first();
   }
 
   /**
@@ -48,9 +56,9 @@ class Project extends DB
    * 
    * @param string $url
    * 
-   * @return mixed
+   * @return array
    */
-  public static function availableUrl(string $url): mixed
+  public static function availableUrl(string $url): array
   {
     return parent::table(self::$table)
       ->select('url')
@@ -59,11 +67,16 @@ class Project extends DB
       ->get();
   }
 
-  public static function insert(array $data)
+  /**
+   * Insert project
+   * 
+   * @param array $data
+   * 
+   * @return int
+   */
+  public static function insert(array $data): int
   {
-      return parent::table(self::$table)
-        ->insert($data)
-        ->run();
+    return parent::table(self::$table)->insert($data)->run();
   }
 
   /**

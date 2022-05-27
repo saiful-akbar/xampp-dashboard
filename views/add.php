@@ -12,7 +12,7 @@
 
 <div class="row">
   <div class="col-sm-12 col-md-8 order-2 order-md-1 mb-4">
-    <form action="<?= e(route('home/store')); ?>" method="POST">
+    <form action="<?= e(route('home/store')); ?>" method="POST" autocomplete="off">
       <div class="card shadow-sm">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center flex-wrap">
