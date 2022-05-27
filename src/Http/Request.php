@@ -34,19 +34,13 @@ class Request
   }
 
   /**
-   * Set input properti
+   * Mengambil method yang di request saat ini.
    * 
-   * @return void
+   * @return string
    */
-  private function setInput(): void
+  public function getMethod(): string
   {
-    if ($this->isGet()) {
-      $this->input = arrayToObject($_GET);
-    }
-
-    if ($this->isPost()) {
-      $this->input = arrayToObject($_POST);
-    }
+    return $this->method;
   }
 
   /**
@@ -67,5 +61,21 @@ class Request
   public function isPost(): bool
   {
     return strtoupper($this->method) === "POST";
+  }
+
+  /**
+   * Set input properti
+   * 
+   * @return void
+   */
+  private function setInput(): void
+  {
+    if ($this->isGet()) {
+      $this->input = arrayToObject($_GET);
+    }
+
+    if ($this->isPost()) {
+      $this->input = arrayToObject($_POST);
+    }
   }
 }

@@ -20,37 +20,37 @@ class QueryBuilder
   /**
    * Nama tabel
    * 
-   * @var string|null
+   * @var string
    */
-  protected ?string $table;
+  protected string $table;
 
   /**
    * Database handler
    * 
-   * @var PDO|null
+   * @var PDO
    */
-  protected ?PDO $dbh;
+  protected PDO $dbh;
 
   /**
    * Query statment
    * 
-   * @var object|null
+   * @var object
    */
-  protected ?object $stmt;
+  protected object $stmt;
 
   /**
    * Struktur query language
    * 
-   * @var string|null
+   * @var string
    */
-  protected ?string $sql;
+  protected string $sql;
 
   /**
    * Value untuk binding data
    * 
    * @var array|null
    */
-  private ?array $bindValue = null;
+  private array $bindValue = [];
 
   /**
    * Set properti & jalankan koneksi database
@@ -78,6 +78,56 @@ class QueryBuilder
   }
 
   /**
+   * Set value for binding
+   * 
+   * @param string $key
+   * @param string $value
+   * 
+   * @return void
+   */
+  protected function setBindValue(string $key, string $value): void
+  {
+    $this->bindValue[$key] = $value;
+  }
+
+  /**
+   * Eksekusi query
+   * 
+   * @return int
+   */
+  public function run(): int
+  {
+    $this->stmt = $this->dbh->prepare(trim($this->sql));
+
+    if (count($this->bindValue) > 0) {
+      foreach ($this->bindValue as $key => $value) {
+        switch ($value) {
+          case is_int($value):
+            $type = PDO::PARAM_INT;
+            break;
+
+          case is_bool($value):
+            $type = PDO::PARAM_BOOL;
+            break;
+
+          case is_null($value):
+            $type = PDO::PARAM_NULL;
+            break;
+
+          default:
+            $type = PDO::PARAM_STR;
+        }
+
+        $this->stmt->bindValue($key, trim($value), $type);
+      }
+    }
+
+    $this->stmt->execute();
+
+    return $this->stmt->rowCount();
+  }
+
+  /**
    * Set properti table
    * 
    * @param string $table
@@ -92,239 +142,88 @@ class QueryBuilder
   }
 
   /**
-   * Start transaction
-   * 
-   * @return void
-   */
-  public function beginTransaction(): QueryBuilder
-  {
-    $this->dbh->beginTransaction();
-
-    return $this;
-  }
-
-  /**
-   * Commit sql transaction
-   * 
-   * @return void
-   */
-  public function commit(): QueryBuilder
-  {
-    $this->dbh->commit();
-
-    return $this;
-  }
-
-  /**
-   * Rollback sql transaction
-   * 
-   * @return void
-   */
-  public function rollback(): QueryBuilder
-  {
-    $this->dbh->rollback();
-
-    return $this;
-  }
-
-  /**
-   * Prepare query
-   * 
-   * @param string|null $query
-   * 
-   * @return void
-   */
-  private function query(?string $sql = null): QueryBuilder
-  {
-    if (!is_null($sql)) $this->sql = $sql;
-
-    $this->stmt = $this->dbh->prepare($this->sql);
-
-    return $this;
-  }
-
-  /**
-   * Set value for binding
-   * 
-   * @param string $key
-   * @param string $value
-   * 
-   * @return void
-   */
-  protected function setBindValue(string $key, string $value): void
-  {
-    $this->bindValue = [$key => $value];
-  }
-
-  /**
-   * Binding value
-   * 
-   * @param array $params
-   * @param int|null $type
-   * 
-   * @return QueryBuilder
-   */
-  public function bind(?array $params = null, ?int $type = null): QueryBuilder
-  {
-    if (is_null($params)) {
-      $params = $this->bindValue;
-    }
-
-    foreach ($params as $key => $value) {
-      switch ($value) {
-        case is_int($value):
-          $type = PDO::PARAM_INT;
-          break;
-
-        case is_bool($value):
-          $type = PDO::PARAM_BOOL;
-          break;
-
-        case is_null($value):
-          $type = PDO::PARAM_NULL;
-          break;
-
-        default:
-          $type = PDO::PARAM_STR;
-      }
-
-      $this->stmt->bindValue($key, trim($value), $type);
-    }
-
-    return $this;
-  }
-
-  /**
-   * Eksekusi query
-   * 
-   * @return int
-   */
-  public function execute(): int
-  {
-    $this->stmt->execute();
-
-    return $this->stmt->rowCount();
-  }
-
-  /**
    * Query select
    * 
-   * @param mixed $fields
+   * @param string|array $column
    * 
    * @return QueryBuilder
    */
-  public function select(mixed $columns = ['*']): QueryBuilder
+  public function select(string|array $columns = ['*']): QueryBuilder
   {
     $columns = is_array($columns) ? $columns : func_get_args();
-    $columns = implode(", ", $columns);
+    $columns = implode(', ', $columns);
 
-    $this->sql = "SELECT {$columns} FROM {$this->table}";
+    $this->sql = "SELECT {$columns} FROM {$this->table} ";
 
     return $this;
   }
 
   /**
-   * Query limit
+   * Query where
    * 
-   * @param int|string $number
+   * @param  string $column
+   * @param  string $operator
+   * @param  string|int $value
    * 
    * @return QueryBuilder
    */
-  public function limit(int|string $number): QueryBuilder
+  public function where(string $column, string $operator, string|int $value): QueryBuilder
   {
-    $this->sql .= " LIMIT {$number}";
+    $this->sql .= "WHERE {$column} {$operator} :{$column} ";
+    $this->setBindValue($column, $value);
 
     return $this;
   }
 
   /**
-   * Query offset
+   * Query and where
    * 
-   * @param int $number
+   * @param  string $column
+   * @param  string $operator
+   * @param  int $value
    * 
    * @return QueryBuilder
    */
-  public function offset(int $number): QueryBuilder
+  public function andWhere(string $column, string $operator, string|int $value): QueryBuilder
   {
-    $this->sql .= " OFFSET {$number}";
+    $this->sql .= "AND {$column} {$operator} :{$column} ";
+    $this->setBindValue($column, $value);
 
     return $this;
   }
 
   /**
-   * Query order atau sort
+   * Query or where
    * 
-   * @param string $field
-   * @param string $sort
+   * @param  string $column
+   * @param  string $operator
+   * @param  int $value
    * 
    * @return QueryBuilder
    */
-  public function orderBy(string $field, string $sort = 'ASC'): QueryBuilder
+  public function orWhere(string $column, string $operator, string|int $value): QueryBuilder
   {
-    if (strtoupper($sort) == 'DESC') {
-      $sort = 'DESC';
-    }
-
-    $this->sql .= " ORDER BY {$field} {$sort}";
-
+    $this->sql .= "OR {$column} {$operator} :{$column} ";
+    $this->setBindValue($column, $value);
+    
     return $this;
   }
 
   /**
-   * Mengambil 1 data dari hasil pertama query
+   * Query not where
    * 
-   * @return bool|object
+   * @param  string $column
+   * @param  string $operator
+   * @param  int $value
+   * 
+   * @return QueryBuilder
    */
-  public function first(): bool|object
+  public function notWhere(string $column, string $operator, string|int $value): QueryBuilder
   {
-    $this->limit(1);
-    $this->query($this->sql);
-
-    if (!is_null($this->bindValue) && is_array($this->bindValue)) {
-      $this->bind($this->bindValue);
-    }
-
-    $this->execute();
-
-    return $this->stmt->fetch();
-  }
-
-  /**
-   * Mengambil semua data dari hasil query
-   * 
-   * @return array
-   */
-  public function get(): array
-  {
-    $this->query($this->sql);
-
-    if (!is_null($this->bindValue) && is_array($this->bindValue)) {
-      $this->bind($this->bindValue);
-    }
-
-    $this->execute();
-
-    return $this->stmt->fetchAll();
-  }
-
-  /**
-   * Query insert 1 row
-   * 
-   * @param array $params
-   * 
-   * @return int
-   */
-  public function insert(array $data): int
-  {
-    $columns = implode(', ', array_keys($data));
-    $values = ':' . implode(', :', array_keys($data));
-
-    $this->sql = "INSERT INTO {$this->table} ($columns) VALUES ($values)";
-
-    $this->query($this->sql);
-    $this->bind($data);
-
-    return $this->execute();
+    $this->sql .= "NOT {$column} {$operator} :{$column} ";
+    $this->setBindValue($column, $value);
+    
+    return $this;
   }
 
   /**
@@ -340,62 +239,124 @@ class QueryBuilder
     $columns = is_array($columns) ? implode(', ', $columns) : $columns;
     $columns = htmlspecialchars(trim($columns));
 
-    $this->sql .= " WHERE MATCH({$columns}) AGAINST(:value IN NATURAL LANGUAGE MODE)";
+    $this->sql .= "WHERE MATCH({$columns}) AGAINST(:value IN NATURAL LANGUAGE MODE) ";
     $this->setBindValue('value', $value);
 
     return $this;
   }
 
   /**
-   * Where query
+   * Query limit
    * 
-   * @param string $column
-   * @param string $operator
-   * @param string $value
+   * @param  int $number
    * 
    * @return QueryBuilder
    */
-  public function where(string $column, string $operator, string $value): QueryBuilder
+  public function limit(int $number): QueryBuilder
   {
-    $this->sql .= " WHERE {$column} {$operator} :{$column}";
+    $this->sql .= "LIMIT {$number} ";
+    return $this;
+  }
 
-    $this->setBindValue($column, $value);
+  /**
+   * Query offset
+   * 
+   * @param  int $number
+   * 
+   * @return QueryBuilder
+   */
+  public function offset(int $number): QueryBuilder
+  {
+    $this->sql .= "OFFSET {$number} ";
+    return $this;
+  }
+
+  /**
+   * Query order by
+   * 
+   * @param string $column
+   * @param string $sort
+   * 
+   * @return QueryBuilder
+   */
+  public function orderBy(string $column, string $sort = 'ASC'): QueryBuilder
+  {
+    $sort = strtoupper($sort);
+    $this->sql .= "ORDER BY {$column} {$sort} ";
 
     return $this;
   }
 
   /**
-   * Or where query
+   * Jalankan query & kembalikan semua hasil data yang didapat
    * 
-   * @param string $column
-   * @param string $operator
-   * @param string $value
-   * 
-   * @return QueryBuilder
+   * @return array
    */
-  public function orWhere(string $column, string $operator, string $value): QueryBuilder
+  public function get()
   {
-    $this->sql .= " OR WHERE {$column} {$operator} :{$column}";
+    $this->run();
+    return $this->stmt->fetchAll();
+  }
 
-    $this->setBindValue($column, $value);
+  /**
+   * Jalankan query & kembalikan 1 hasil data yang didapat
+   * 
+   * @return array
+   */
+  public function first()
+  {
+    $this->run();
+    return $this->stmt->fetch();
+  }
+
+  /**
+   * Query insert 1 row
+   * 
+   * @param array $params
+   * 
+   * @return int
+   */
+  public function insert(array $data): QueryBuilder
+  {
+    $columns = implode(', ', array_keys($data));
+    $values = ':' . implode(', :', array_keys($data));
+
+    $this->sql = "INSERT INTO {$this->table} ($columns) VALUES ($values)";
+
+    foreach ($data as $key => $value) {
+      $this->setBindValue($key, $value);
+    }
 
     return $this;
   }
 
   /**
-   * And where query
+   * Query delete
    * 
    * @param string $column
-   * @param string $operator
-   * @param string $value
    * 
    * @return QueryBuilder
    */
-  public function andWhere(string $column, string $operator, string $value): QueryBuilder
+  public function delete(): QueryBuilder
   {
-    $this->sql .= " AND WHERE {$column} {$operator} :{$column}";
+    $this->sql = "DELETE FROM {$this->table} ";
+    return $this;
+  }
 
-    $this->setBindValue($column, $value);
+  public function update(array $data): QueryBuilder
+  {
+
+    $values = '';
+
+    foreach ($data as $key => $value) {
+      if (array_key_last($data) === $key) {
+        $values .= "{$key}='{$value}'";
+      } else {
+        $values .= "{$key}='{$value}', ";
+      }
+    }
+
+    $this->sql = "UPDATE {$this->table} SET {$values} ";
 
     return $this;
   }

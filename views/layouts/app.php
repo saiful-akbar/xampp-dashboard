@@ -15,10 +15,12 @@ use Src\Views\Header;
   <meta name="description" content="<?= config('app.description'); ?>">
 
   <!-- Title -->
-  <title><?= $title . ' - ' . config('app.name'); ?></title>
+  <title>
+    <?= $title . ' - ' . config('app.name'); ?>
+  </title>
 
   <!-- Icon -->
-  <link rel="shortcut icon" href="<?= url('/favicon.png') ?>" type="image/x-icon">
+  <link rel="shortcut icon" href="<?= url('/favicon.png'); ?>" type="image/x-icon">
 
   <!-- CSS -->
   <link rel="stylesheet" href="<?= url('/assets/css/bootstrap.min.css') ?>">
@@ -30,11 +32,11 @@ use Src\Views\Header;
 
   <!-- Notifikasi alert -->
   <?php if (Flash::get('alert')) : ?>
-    <div class="alert alert-<?php e(Flash::get('alert')->type) ?> alert-dismissible fade show shadow-sm my-0 " style="border-radius: 0;">
+    <div class="alert alert-<?= e(Flash::get('alert')->type); ?> alert-dismissible fade show shadow-sm my-0 " style="border-radius: 0;">
       <button class="btn-close" data-bs-dismiss="alert"></button>
 
       <p class="mb-0">
-        <?php e(Flash::get('alert')->message); ?>
+        <?= e(Flash::get('alert')->message); ?>
       </p>
     </div>
   <?php endif; ?>

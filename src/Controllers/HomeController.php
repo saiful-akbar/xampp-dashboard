@@ -98,7 +98,7 @@ class HomeController extends Controller
 
     // Insert ke database jika semua validasi lolos.
     try {
-      DB::table('projects')->insert([
+      Project::insert([
         'name' => $request->input->name,
         'url' => $request->input->url,
         'description' => $request->input->description,
@@ -109,11 +109,103 @@ class HomeController extends Controller
 
     // Redirect ke halaman home.
     // Serta kirimkan alert insert data berhasil.
-    return Response::toRoute('home/add')
-      ->withFlash('alert', [
-        'type' => 'success',
-        'message' => '1 new project added successfully.',
+    return Response::toRoute('home/add')->withFlash('alert', [
+      'type' => 'success',
+      'message' => '1 new project added successfully.',
+    ]);
+  }
+
+  /**
+   * Delete project
+   * 
+   * @param  Request $request
+   * 
+   * @return Response
+   */
+  public function delete(Request $request): Response
+  {
+    // Cek apakah id dikirim atau tidak
+    if (!isset($request->input->id) || empty($request->input->id)) {
+      return Response::toRoute('home/index');
+    }
+
+    // Proses delete
+    try {
+      if (Project::delete($request->input->id) <= 0) {
+        Response::toRoute('home/index')->withFlash('alert', [
+          'type' => 'warning',
+          'message' => "Project with id {$request->input->id} not found.",
+        ]);
+      }
+    } catch (Exception $e) {
+      return Response::toRoute('home/index')->withFlash('alert', [
+        'type' => 'danger',
+        'message' => 'Project failed to delete',
       ]);
+    }
+
+    // Response jika proses delete berhasil
+    return Response::toRoute('home/index')
+        ->withFlash('alert', [
+          'type' => 'success',
+          'message' => '1 Project deleted successfully.',
+        ]);
+  }
+
+  /**
+   * View edit project
+   * 
+   * @param Request $request
+   * 
+   * @return mixed
+   */
+  public function edit(Request $request): mixed
+  {
+    // Cek id direquest atau tidak
+    if (!isset($request->input->id) || empty($request->input->id)) {
+      return Response::toRoute('home/index')->withFlash('alert', [
+        'type' => 'warning',
+        'message' => 'Project not found!'
+      ]);
+    }
+
+    // Ambil data project
+    $project = Project::find($request->input->id);
+
+    // Cek apakah hasil query ada atau kosong
+    if (!$project) {
+      return Response::toRoute('home/index')->withFlash('alert', [
+        'type' => 'warning',
+        'message' => 'Project not found!'
+      ]);
+    }
+
+    // view layout
+    return layout(
+      view: 'layouts/app',
+      content: 'edit',
+      data: [
+        'title' => 'Edit Project',
+        'project' => $project,
+      ]
+    );
+  }
+
+  /**
+   * Update project
+   * 
+   * @param Request $request
+   * 
+   * @return
+   */
+  public function update(Request $request)
+  {
+    // Jika method bukan POST redirect ke halaman home.
+    if ($request->method != 'POST') {
+      return Response::toRoute('home/index');
+    }
+
+    echo "Update project";
   }
 
   /**

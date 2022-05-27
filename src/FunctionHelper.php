@@ -194,9 +194,9 @@ if (!function_exists('e')) {
    * @param mixed $value
    * @param string|null $character
    * 
-   * @return void
+   * @return string|int
    */
-  function e(mixed $value, ?string $character = null): void
+  function e(mixed $value, ?string $character = null): string|int
   {
     if (!is_null($character)) {
       $value = trim($value, $character);
@@ -204,7 +204,7 @@ if (!function_exists('e')) {
       $value = trim($value);
     }
 
-    echo htmlspecialchars($value);
+    return htmlspecialchars($value);
   }
 }
 
@@ -263,5 +263,20 @@ if (!function_exists('error')) {
     }
 
     return $error;
+  }
+}
+
+if(!function_exists('dd')) {
+
+  /**
+   * var_dump & die
+   * 
+   * @param  mixed $data
+   * @return void
+   */
+  function dd(mixed $data): void
+  {
+    var_dump($data);
+    die();
   }
 }

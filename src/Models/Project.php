@@ -16,6 +16,15 @@ class Project extends DB
    */
   protected static $table = 'projects';
 
+  public static function find(int $id)
+  {
+      return parent::table(self::$table)
+        ->select()
+        ->where('id', '=', $id)
+        ->limit(1)
+        ->first();
+  }
+
   /**
    * Mengambil semua data project
    * 
@@ -28,7 +37,7 @@ class Project extends DB
     $query = parent::table(self::$table)->select();
 
     if (!empty($search)) {
-      $query->whereFullText(['description', 'name'], $search);
+      $query->whereFullText(['name', 'description'], $search);
     }
 
     return $query->orderBy('name', 'asc')->get();
@@ -46,6 +55,29 @@ class Project extends DB
     return parent::table(self::$table)
       ->select('url')
       ->where('url', '=', $url)
-      ->first();
+      ->limit(1)
+      ->get();
+  }
+
+  public static function insert(array $data)
+  {
+      return parent::table(self::$table)
+        ->insert($data)
+        ->run();
+  }
+
+  /**
+   * Delete project
+   * 
+   * @param  int $id
+   * 
+   * @return int
+   */
+  public static function delete(string|int $id): int
+  {
+    return parent::table(name: self::$table)
+      ->delete()
+      ->where('id', '=', $id)
+      ->run();
   }
 }

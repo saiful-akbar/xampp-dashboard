@@ -10,32 +10,13 @@ use Src\Database\QueryBuilder;
 class DB
 {
   /**
-   * SQL Query builder
-   * 
-   * @var QueryBuilder|null|null
-   */
-  public static ?QueryBuilder $builder = null;
-
-  /**
-   * Constructor
-   */
-  function __construct()
-  {
-    self::setBuilder();
-  }
-
-  /**
    * Set properti builder dengan class QueryBuilder
    * 
    * @return QueryBuilder
    */
-  protected static function setBuilder(): QueryBuilder
+  protected static function builder(): QueryBuilder
   {
-    if (is_null(self::$builder)) {
-      self::$builder = new QueryBuilder();
-    }
-
-    return self::$builder;
+    return new QueryBuilder();
   }
 
   /**
@@ -45,12 +26,12 @@ class DB
    * 
    * @return QueryBuilder
    */
-  public static function table(string $table): QueryBuilder
+  public static function table(string $name): QueryBuilder
   {
-    self::setBuilder();
-    self::$builder->table($table);
+    $builder = self::builder();
+    $builder->table($name);
 
-    return self::$builder;
+    return $builder;
   }
 
   /**
@@ -62,14 +43,14 @@ class DB
    */
   public static function beginTransaction(callable $action)
   {
-    self::setBuilder();
-    self::$builder->beginTransaction();
+    $builder = self::builder();
+    $builder->beginTransaction();
 
     try {
       $action();
-      self::$builder->commit();
+      $builder->commit();
     } catch (\PDOException $e) {
-      self::$builder->rollback();
+      $builder->rollback();
       throw $e->getMessage();
     }
   }
