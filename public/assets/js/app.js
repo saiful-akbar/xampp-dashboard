@@ -1,12 +1,27 @@
-const handleDelete = (href) => {
-  const confirmation = confirm('Are you sure you want to delete this data?');
+class App {
+  constructor() {
+    this.baseUrl = document.querySelector('meta[name=base-url]')?.content;
+  }
 
-  if (confirmation) {
-    window.location.href = href;
+  /**
+   * Set route url
+   *
+   * @param {string} to
+   * @param {array} [parameters=[]]
+   * 
+   * @memberof App
+   * 
+   * @returns {string}
+   */
+  route = (to, parameters = []) => {
+    let url = `${this.baseUrl}?route=${to}`;
+
+    if (parameters.length > 0) {
+      url += parameters.map((param) => `&${param.key}=${param.value}`).join('');
+    }
+
+    return url.trim();
   }
 }
 
-(function() {
-  [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(el => new bootstrap.Tooltip(el));
-})();
-
+export default App;

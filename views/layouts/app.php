@@ -13,6 +13,7 @@ use Src\Views\Header;
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="<?= config('app.description'); ?>">
+  <meta name="base-url" content="<?= e(url('/')) ?>">
 
   <!-- Title -->
   <title><?= $title . ' - ' . config('app.name'); ?></title>
@@ -44,9 +45,14 @@ use Src\Views\Header;
   </div>
 
   <!-- JS -->
-  <script type="text/javascript" src="<?= url('/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
-  <script type="text/javascript" src="<?= url('/assets/vendor/jquery/jquery-3.6.0.min.js') ?>"></script>
-  <script type="text/javascript" src="<?= url('/assets/js/app.js') ?>"></script>
+  <script type="module" src="<?= url('/assets/js/globals.js') ?>"></script>
+
+  <!-- Oteher JS -->
+  <?php if (isset($scripts)) : ?>
+    <?php foreach ($scripts as $script) : ?>
+      <script type="module" src="<?= e(url($script)); ?>"></script>
+    <?php endforeach; ?>
+  <?php endif; ?>
 </body>
 
 </html>

@@ -31,6 +31,7 @@ class HomeController extends Controller
         'title' => 'Home',
         'projects' => Project::findOrAll($search),
         'search' => $search,
+        'scripts' => ['/assets/js/pages/home.js'],
       ],
     );
   }

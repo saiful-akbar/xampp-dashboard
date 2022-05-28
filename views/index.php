@@ -50,7 +50,7 @@
 				</a>
 
 				<footer class="card-footer">
-					<button type="button" onclick="handleDelete('<?= e(route('home/delete', ['id' => $project->id])); ?>')" class="btn btn-sm btn-dark bg-gradient shadow-sm" data-bs-toggle="tooltip" title="Delete">
+					<button data-id="<?= e($project->id); ?>" class="btn btn-sm btn-dark bg-gradient shadow-sm btn-delete-project" data-bs-toggle="tooltip" title="Delete">
 						<i class="bi bi-trash"></i>
 					</button>
 
