@@ -353,6 +353,13 @@ class QueryBuilder
     return $this;
   }
 
+  /**
+   * Query update
+   * 
+   * @param array $data
+   * 
+   * @return QueryBuilder
+   */
   public function update(array $data): QueryBuilder
   {
 
@@ -360,13 +367,27 @@ class QueryBuilder
 
     foreach ($data as $key => $value) {
       if (array_key_last($data) === $key) {
-        $values .= "{$key}='{$value}'";
+        $values .= "{$key}=:{$key}";
       } else {
-        $values .= "{$key}='{$value}', ";
+        $values .= "{$key}=:{$key}, ";
       }
+
+      $this->setBindValue($key, $value);
     }
 
     $this->sql = "UPDATE {$this->table} SET {$values} ";
+
+    return $this;
+  }
+
+  /**
+   * Query for update
+   * 
+   * @return QueryBuilder
+   */
+  public function forUpdate(): QueryBuilder
+  {
+    $this->sql .= "FOR UPDATE ";
 
     return $this;
   }

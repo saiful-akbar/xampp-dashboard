@@ -168,7 +168,7 @@ class HomeController extends Controller
     // Cek id direquest atau tidak
     if (!isset($request->input->id) || empty($request->input->id)) {
       return Response::toRoute('home/index')->withFlash('alert', [
-        'type' => 'warning',
+        'type' => 'danger',
         'message' => 'Project not found!'
       ]);
     }
@@ -179,7 +179,7 @@ class HomeController extends Controller
     // Cek apakah hasil query ada atau kosong
     if (!$project) {
       return Response::toRoute('home/index')->withFlash('alert', [
-        'type' => 'warning',
+        'type' => 'danger',
         'message' => 'Project not found!'
       ]);
     }
@@ -209,7 +209,66 @@ class HomeController extends Controller
       return Response::toRoute('home/index');
     }
 
-    echo "Update project";
+    // Cek id direquest atau tidak
+    if (!isset($request->input->id) || empty($request->input->id)) {
+      return Response::toRoute('home/index')->withFlash('alert', [
+        'type' => 'danger',
+        'message' => 'Project not found!'
+      ]);
+    }
+
+    // variabel untuk menampung error
+    $validatedResponse = [];
+
+    // Validasi apa value dari nama kosong atau tidak.
+    if (empty(trim($request->input->name))) {
+      $validatedResponse['name'] = 'Project name is required';
+    }
+
+    // Validasi ukuran panjang name
+    if (strlen($request->input->name) > 100) {
+      $validatedResponse['name'] = 'The project name cannot be longer than 100 characters.';
+    }
+
+    // Validasi apakah url yang sama sudah digunakan atu belum.
+    if (Project::checkUrlForUpdate($request->input->url, $request->input->id)) {
+      $validatedResponse['url'] = 'The same url is already in use.';
+    }
+
+    // Validasi ukuran panjang url
+    if (strlen($request->input->url) > 100) {
+      $validatedResponse['url'] = 'Url cannot be more than 100 characters.';
+    }
+
+    // Cek jumlah pesan error.
+    // Jika validasi gagal kembali ke halaman add project,
+    // Serta kirimkan pesan error dan old value-nya.
+    if (count($validatedResponse) > 0) {
+      return Response::toRoute('home/edit', ['id' => $request->input->id])
+        ->withFlash('errors', $validatedResponse)
+        ->withOldInput((array) $request?->input);
+    }
+
+    $data['name'] = $request->input->name;
+    $data['url'] = $request->input->url;
+
+    if (!empty($request->input->description)) {
+      $data['description'] =  $request->input->description;
+    }
+
+    // Insert ke database jika semua validasi lolos.
+    try {
+      Project::update($data, $request->input->id);
+    } catch (\Throwable $th) {
+      throw new PDOException($th->getMessage());
+    }
+
+    // Redirect ke halaman home.
+    // Serta kirimkan alert insert data berhasil.
+    return Response::toRoute('home/index')->withFlash('alert', [
+      'type' => 'success',
+      'message' => '1 new project updated successfully.',
+    ]);
   }
 
   /**

@@ -93,4 +93,37 @@ class Project extends DB
       ->where('id', '=', $id)
       ->run();
   }
+
+  /**
+   * Check url for update
+   * 
+   * @param string $url
+   * @param string $id
+   * 
+   * @return mixed
+   */
+  public static function checkUrlForUpdate(string $url, int|string $id): mixed
+  {
+    return parent::table(self::$table)
+      ->select('url')
+      ->where('url', '=', $url)
+      ->andWhere('id', '!=', $id)
+      ->first();
+  }
+
+  /**
+   * Update project
+   * 
+   * @param array $data
+   * @param string $id
+   * 
+   * @return mixed
+   */
+  public static function update(array $data, int|string $id): int
+  {
+      return parent::table(self::$table)
+      ->update($data)
+      ->where('id', '=', $id)
+      ->run();
+  }
 }
