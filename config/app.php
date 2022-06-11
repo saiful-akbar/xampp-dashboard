@@ -4,17 +4,17 @@ return [
   /**
    * Nama aplikasi
    */
-  'name' => 'XAMPP Dashboard',
+  'name' => 'Dashboard',
 
   /**
    * Deskripsi aplikasi
    */
-  'description' => 'Custom dashboard for xampp htdocs.',
+  'description' => 'Custom dashboard for server htdocs.',
 
   /**
    * Aplikasi url
    */
-  'url' => 'http://localhost/xampp-dashboard',
+  'url' => 'http://dashboard.test/',
 
   /**
    * Aplikasi versi

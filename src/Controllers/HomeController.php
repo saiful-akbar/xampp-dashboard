@@ -1,10 +1,9 @@
 <?php
 
-use Src\Core\Controller;
-use Src\Database\DB;
 use Src\Http\Request;
 use Src\Http\Response;
 use Src\Models\Project;
+use Src\Core\Controller;
 
 /**
  * Home Controller
@@ -18,7 +17,7 @@ class HomeController extends Controller
    */
   public function index(Request $request): mixed
   {
-    $search = null;
+    $search = "";
 
     if (isset($request->input->search) && !empty($request->input->search)) {
       $search = $request->input->search;
@@ -115,7 +114,7 @@ class HomeController extends Controller
     // Serta kirimkan alert insert data berhasil.
     return Response::toRoute('home/add')->withFlash('alert', [
       'type' => 'success',
-      'message' => '1 new project added successfully.',
+      'message' => 'New project added successfully.',
     ]);
   }
 
@@ -152,7 +151,7 @@ class HomeController extends Controller
     return Response::toRoute('home/index')
       ->withFlash('alert', [
         'type' => 'success',
-        'message' => '1 Project deleted successfully.',
+        'message' => 'Project deleted successfully.',
       ]);
   }
 
@@ -267,7 +266,7 @@ class HomeController extends Controller
     // Serta kirimkan alert insert data berhasil.
     return Response::toRoute('home/index')->withFlash('alert', [
       'type' => 'success',
-      'message' => '1 new project updated successfully.',
+      'message' => 'Project updated successfully.',
     ]);
   }
 

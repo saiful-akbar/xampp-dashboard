@@ -191,12 +191,12 @@ if (!function_exists('e')) {
   /**
    * Clear print
    * 
-   * @param mixed $value
+   * @param string|int $value
    * @param string|null $character
    * 
    * @return string|int
    */
-  function e(mixed $value, ?string $character = null): string|int
+  function e(string|int $value, ?string $character = null): string|int
   {
     if (!is_null($character)) {
       $value = trim($value, $character);
@@ -218,7 +218,7 @@ if (!function_exists('old')) {
    * 
    * @return string|null
    */
-  function old(string $name, ?string $default = null): ?string
+  function old(string $name, ?string $default = ""): ?string
   {
     if (!Flash::get('old')) {
       return $default;

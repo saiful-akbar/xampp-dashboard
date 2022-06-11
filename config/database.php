@@ -9,15 +9,15 @@ return [
   /**
    * Nama database
    */
-  'name' => 'xampp_dashboard',
+  'name' => 'dashboard',
 
   /**
    * User database
    */
-  'user' => 'xampp_dashboard',
+  'user' => 'root',
 
   /**
    * Password database
    */
-  'password' => 'xampp_dashboard',
+  'password' => 'root',
 ];
